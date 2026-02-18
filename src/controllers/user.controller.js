@@ -91,3 +91,165 @@ export const getCurrentUser = asynchandler(async (req, res) => {
     throw new ApiError(500, error?.message || "Server Error");
   }
 });
+
+// Update user preferences
+export const updateUserPreferences = asynchandler(async (req, res) => {
+  const userId = req.user._id;
+  const { favoriteGenres, favoriteLanguages, preferredCities } = req.body;
+
+  try {
+    const user = await User.findByIdAndUpdate(
+      userId,
+      {
+        preferences: {
+          favoriteGenres: favoriteGenres || [],
+          favoriteLanguages: favoriteLanguages || [],
+          preferredCities: preferredCities || [],
+        },
+      },
+      { new: true }
+    ).select("-password");
+
+    if (!user) {
+      throw new ApiError(404, "User Not Found");
+    }
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, user, "User preferences updated successfully"));
+  } catch (error) {
+    throw new ApiError(500, error?.message || "Server Error");
+  }
+});
+
+// Get user preferences
+export const getUserPreferences = asynchandler(async (req, res) => {
+  const userId = req.user._id;
+
+  try {
+    const user = await User.findById(userId).select("preferences");
+
+    if (!user) {
+      throw new ApiError(404, "User Not Found");
+    }
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, user.preferences, "User preferences fetched successfully"));
+  } catch (error) {
+    throw new ApiError(500, error?.message || "Server Error");
+  }
+});
+
+// Get recommended movies based on user preferences
+export const getRecommendedMovies = asynchandler(async (req, res) => {
+  const userId = req.user._id;
+
+  try {
+    const user = await User.findById(userId).select("preferences");
+
+    if (!user) {
+      throw new ApiError(404, "User Not Found");
+    }
+
+    const { Movie } = await import("../models/Movie.js");
+    
+    // Build query based on user preferences
+    const query = {};
+    if (user.preferences?.favoriteGenres?.length > 0) {
+      query.genre = { $in: user.preferences.favoriteGenres };
+    }
+    if (user.preferences?.favoriteLanguages?.length > 0) {
+      query.language = { $in: user.preferences.favoriteLanguages };
+    }
+
+    const recommendedMovies = await Movie.find(query)
+      .limit(10)
+      .sort({ rating: -1 });
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, recommendedMovies, "Recommended movies fetched successfully"));
+  } catch (error) {
+    throw new ApiError(500, error?.message || "Server Error");
+  }
+});
+
+// Get user loyalty points
+export const getUserLoyaltyPoints = asynchandler(async (req, res) => {
+  const userId = req.user._id;
+
+  try {
+    const user = await User.findById(userId).select("loyaltyPoints");
+
+    if (!user) {
+      throw new ApiError(404, "User Not Found");
+    }
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, { loyaltyPoints: user.loyaltyPoints }, "Loyalty points fetched successfully"));
+  } catch (error) {
+    throw new ApiError(500, error?.message || "Server Error");
+  }
+});
+
+// Add loyalty points to user (called after booking)
+export const addLoyaltyPoints = asynchandler(async (req, res) => {
+  const { userId, points } = req.body;
+
+  if (!userId || !points) {
+    throw new ApiError(400, "User ID and points are required");
+  }
+
+  try {
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { $inc: { loyaltyPoints: points } },
+      { new: true }
+    ).select("loyaltyPoints");
+
+    if (!user) {
+      throw new ApiError(404, "User Not Found");
+    }
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, user, "Loyalty points added successfully"));
+  } catch (error) {
+    throw new ApiError(500, error?.message || "Server Error");
+  }
+});
+
+// Redeem loyalty points
+export const redeemLoyaltyPoints = asynchandler(async (req, res) => {
+  const userId = req.user._id;
+  const { pointsToRedeem } = req.body;
+
+  if (!pointsToRedeem || pointsToRedeem <= 0) {
+    throw new ApiError(400, "Invalid points to redeem");
+  }
+
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      throw new ApiError(404, "User Not Found");
+    }
+
+    if (user.loyaltyPoints < pointsToRedeem) {
+      throw new ApiError(400, "Insufficient loyalty points");
+    }
+
+    user.loyaltyPoints -= pointsToRedeem;
+    await user.save();
+
+    const discountAmount = (pointsToRedeem / 100) * 10; // 10% discount per 100 points
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, { discountAmount, remainingPoints: user.loyaltyPoints }, "Loyalty points redeemed successfully"));
+  } catch (error) {
+    throw new ApiError(500, error?.message || "Server Error");
+  }
+});

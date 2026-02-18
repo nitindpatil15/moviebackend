@@ -42,6 +42,16 @@ const userSchema = new Schema(
     },
     accessToken:{
       type:String
+    },
+    loyaltyPoints: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+    preferences: {
+      favoriteGenres: [String],
+      favoriteLanguages: [String],
+      preferredCities: [String],
     }
   },
   { timestamps: true }

@@ -1,3 +1,20 @@
+// Get Theatres by City
+export const getTheatresByCity = asynchandler(async (req, res) => {
+  const { city } = req.query;
+  if (!city) {
+    return res.status(400).json({ success: false, message: "City is required" });
+  }
+  try {
+    const theatres = await Theatre.find({ city: { $regex: city, $options: 'i' } });
+    if (!theatres.length) {
+      return res.status(404).json({ success: false, message: "No theatres found for this city" });
+    }
+    return res.status(200).json({ success: true, theatres });
+  } catch (error) {
+    console.error("Error fetching theatres by city:", error);
+    return res.status(500).json({ success: false, message: error.message || "Server Error" });
+  }
+});
 import Movie from "../models/Movie.js";
 import Theatre from "../models/Theater.js";
 import { ApiError } from "../utils/ApiError.js";

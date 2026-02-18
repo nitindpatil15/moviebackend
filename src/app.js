@@ -40,6 +40,8 @@ import showTimeRoutes from "./Routes/showtimeRoutes.js"
 import bookRoutes from "./Routes/BookRoutes.js"
 import userRoutes from "./Routes/UserRoutes.js"
 import adRoutes from "./Routes/AdRoutes.js"
+import paymentRoutes from "./Routes/paymentRoutes.js"
+import analyticsRoutes from "./Routes/analyticsRoutes.js"
 import { createBooking, } from "./controllers/booking.controller.js";
 import verifyJWT from "./middlewares/authMiddleware.js";
 
@@ -51,6 +53,8 @@ app.use("/api/v2/theatres",theatreRoutes)
 app.use("/api/v2/showtimes",showTimeRoutes)
 app.use("/api/v2/reservation",bookRoutes)
 app.use("/api/v2/advertise",adRoutes)
+app.use("/api/v2/payment",paymentRoutes)
+app.use("/api/v2/analytics",analyticsRoutes)
 app.post('/movie/book-tickets', verifyJWT,createBooking);
 
 export { app };

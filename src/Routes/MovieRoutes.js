@@ -5,6 +5,10 @@ import {
   getAllMovies,
   getMovieById,
   updateMovieById,
+  searchMovies,
+  getMoviesByCity,
+  addReview,
+  getMovieReviews,
 } from "../controllers/movie.controller.js";
 import verifyJWT from "../middlewares/authMiddleware.js";
 import { upload } from "../middlewares/multerMiddleware.js";
@@ -28,6 +32,8 @@ router.route("/createmovie").post(
   createMovie
 );
 router.route("/").get(getAllMovies);
+router.route("/search").get(searchMovies);
+router.route("/city/:city").get(getMoviesByCity);
 router.route("/movies/up/:movieId").patch(
   upload.fields([
     { name: "image", maxCount: 1 },
@@ -41,5 +47,9 @@ router
   .route("/movies/d/:movieId")
   .delete(verifyJWT, authorizeAdmins, DeleteMoviebyId);
 router.route("/movies/:movieId").get(getMovieById);
+
+// Review routes
+router.route("/:movieId/reviews").get(getMovieReviews);
+router.route("/:movieId/reviews").post(verifyJWT, addReview);
 
 export default router;

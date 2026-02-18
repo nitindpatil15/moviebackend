@@ -1,3 +1,7 @@
+// Buffer polyfill for Node.js v25 compatibility
+import { Buffer } from 'buffer';
+globalThis.Buffer = Buffer;
+
 import {app} from './app.js'
 import dotenv from 'dotenv'
 import { connectDB } from './config/db.js';

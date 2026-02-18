@@ -49,6 +49,15 @@ const reservationSchema = new Schema(
       type: String,
       required: true,
     },
+    status: {
+      type: String,
+      enum: ["confirmed", "cancelled", "refunded"],
+      default: "confirmed",
+    },
+    refundAmount: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 );

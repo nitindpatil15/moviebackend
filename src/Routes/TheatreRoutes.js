@@ -8,6 +8,7 @@ import {
   getTheatreByMovie,
   getTheatreById,
   updateTheatre,
+  getTheatresByCity,
 } from "../controllers/theatre.controller.js";
 import { upload } from "../middlewares/multerMiddleware.js";
 import { authorizeAdmins, authorizeSuperAdmin } from "../middlewares/authorizesuperAdmin.js";
@@ -28,6 +29,7 @@ router
   .delete(verifyJWT, authorizeSuperAdmin, deleteTheatre);
 
 router.route("/getalltheatre").get(getAllTheatres);
+router.route("/gettheatrebycity").get(verifyJWT, getTheatresByCity);
 router.route("/getalltheatre/:movieId").get(getTheatreByMovie);
 router.route("/gettheatre/:theatreId").get(getTheatreById);
 

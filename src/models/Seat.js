@@ -14,6 +14,19 @@ const seatSchema = new mongoose.Schema({
     default: false,
     index: true
   },
+  category: {
+    type: String,
+    enum: ["Regular", "Premium", "Couple"],
+    default: "Regular",
+  },
+  price: {
+    type: Number,
+    default: 250,
+  },
+  isAccessible: {
+    type: Boolean,
+    default: false,
+  },
   movieId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Movie',

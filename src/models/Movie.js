@@ -1,34 +1,5 @@
 import mongoose, { Schema } from "mongoose";
 
-const castSchema = new Schema({
-  name: {
-    type: String,
-    required: true,
-  },
-  role: {
-    type: String,
-    required: true,
-  },
-  image: {
-    type: String, // URL
-    required: true,
-  },
-});
-const crewSchema = new Schema({
-  name: {
-    type: String,
-    required: true,
-  },
-  role: {
-    type: String,
-    required: true,
-  },
-  image: {
-    type: String, // URL
-    required: true,
-  },
-});
-
 const movieSchema = new Schema(
   {
     title: {
@@ -36,7 +7,7 @@ const movieSchema = new Schema(
       required: true,
     },
     image: {
-      type: String, // URL
+      type: String,
       required: true,
     },
     language: {
@@ -51,18 +22,49 @@ const movieSchema = new Schema(
       type: String,
       required: true,
     },
-    cast: [castSchema], // Array of cast members
-    crew: [crewSchema], // Array of cast members
     trailer: {
       type: String,
     },
     description: {
       type: String,
+      required: true,
     },
     duration: {
       type: Number,
       required: true,
     },
+    cast: [
+      {
+        name: {
+          type: String,
+          required: true,
+        },
+        role: {
+          type: String,
+          required: true,
+        },
+        image: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
+    crew: [
+      {
+        name: {
+          type: String,
+          required: true,
+        },
+        role: {
+          type: String,
+          required: true,
+        },
+        image: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
     startDate: {
       type: Date,
       required: true,
@@ -71,10 +73,33 @@ const movieSchema = new Schema(
       type: Date,
       required: true,
     },
-    theatres: [
+    rating: {
+      type: Number,
+      default: 0,
+      min: 0,
+      max: 5,
+    },
+    reviews: [
       {
-        type: Schema.Types.ObjectId,
-        ref: "Theatre",
+        userId: {
+          type: Schema.Types.ObjectId,
+          ref: "User",
+          required: true,
+        },
+        rating: {
+          type: Number,
+          required: true,
+          min: 1,
+          max: 5,
+        },
+        comment: {
+          type: String,
+          required: true,
+        },
+        date: {
+          type: Date,
+          default: Date.now,
+        },
       },
     ],
   },
