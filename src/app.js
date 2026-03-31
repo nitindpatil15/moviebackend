@@ -5,7 +5,7 @@ import cors from "cors";
 const app = express();
 
 const corsOptions = {
-  origin: "https://movie-ticket-booking-one.vercel.app",
+  origin: [ "http://localhost:3000", "https://movie-ticket-booking-phi.vercel.app" ],
   methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
   headers: ["Content-Type", 'Authorization', 'auth-token'],
   credentials: true,

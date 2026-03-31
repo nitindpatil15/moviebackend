@@ -156,9 +156,19 @@ export const getAllReservations = asynchandler(async (req, res) => {
   try {
     let AllReservations;
     if (req.user.role === "SuperAdmin") {
-      AllReservations = await Booking.find({}); // Fetch all reservations for SuperAdmin
+      AllReservations = await Booking.find({})
+        .populate('seats', 'row number isBooked') // Populate seat details
+        .populate('movieId', 'title language genre director description duration startDate endDate cast crew trailer image') // Populate movie details
+        .populate('theatreId', 'name city address') // Populate theatre details
+        .populate('showtimeId', 'showtime ticketPrice') // Populate showtime details
+        .populate('userId', 'name email phone'); // Populate user details
     } else {
-      AllReservations = await Booking.find({ userId }); // Fetch reservations for the specific user
+      AllReservations = await Booking.find({ userId })
+        .populate('seats', 'row number isBooked') // Populate seat details
+        .populate('movieId', 'title language genre director description duration startDate endDate cast crew trailer image') // Populate movie details
+        .populate('theatreId', 'name city address') // Populate theatre details
+        .populate('showtimeId', 'showtime ticketPrice') // Populate showtime details
+        .populate('userId', 'name email phone'); // Populate user details
     }
 
     return res

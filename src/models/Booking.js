@@ -36,6 +36,11 @@ const reservationSchema = new Schema(
       ref: "Theatre",
       required: true,
     },
+    showtimeId: {
+      type: Schema.Types.ObjectId,
+      ref: "Showtime",
+      required: true,
+    },
     userId: {
       type: Schema.Types.ObjectId,
       ref: "User",

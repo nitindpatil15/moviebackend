@@ -51,7 +51,8 @@ export const assignTheatreToMovie = asynchandler(async (req, res) => {
     if (!theatreId) {
       throw new ApiError(400, "Theatre ID is Required");
     }
-
+    console.log("Theatre ID:", theatreId);
+    console.log("Movie ID:", movieId);
     // Check if movie exists
     const movie = await Movie.findById(movieId);
     if (!movie) {
@@ -63,7 +64,7 @@ export const assignTheatreToMovie = asynchandler(async (req, res) => {
     if (!theatre) {
       throw new ApiError(403, "Theatre not found");
     }
-
+    console.log(theatre, req.user._id, req.user.role)
     // Compare IDs as strings to ensure they match correctly
     if (
       theatre.owner.toString() === req.user._id.toString() ||
